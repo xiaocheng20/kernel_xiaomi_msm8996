@@ -1514,8 +1514,8 @@ module_exit(cpu_clock_8996_exit);
 #define HF_MUX_SEL_LF_MUX 0x1
 #define LF_MUX_SEL_ALT_PLL 0x1
 
-#define PWRCL_EARLY_BOOT_RATE 1286400000
-#define PERFCL_EARLY_BOOT_RATE 1363200000
+#define PWRCL_EARLY_BOOT_RATE 1324800000
+#define PERFCL_EARLY_BOOT_RATE 1632000000
 
 static int use_alt_pll;
 module_param(use_alt_pll, int, 0444);
@@ -1563,6 +1563,8 @@ int __init cpu_clock_8996_early_init(void)
 	} else if (of_find_compatible_node(NULL, NULL,
 					 "qcom,cpu-clock-8996-v3")) {
 		cpu_clocks_v3 = true;
+		pwrcl_early_boot_rate = PWRCL_EARLY_BOOT_RATE;
+		perfcl_early_boot_rate = PERFCL_EARLY_BOOT_RATE;
 	} else if (!of_find_compatible_node(NULL, NULL,
 					 "qcom,cpu-clock-8996")) {
 		return 0;
