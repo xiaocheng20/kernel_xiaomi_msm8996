@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015-2017, The OnePlus corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,16 +27,36 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _LINUX_MODULE_DEFRAG_H
-#define _LINUX_MODULE_DEFRAG_H
-
-#include <linux/compiler.h>
+#include <linux/stddef.h>
 #include <linux/module.h>
-#include <../drivers/oneplus/coretech/defrag/defrag_helper.h>
-#include <../drivers/oneplus/coretech/defrag/op_struct_offset_helper.h>
 
-bool check_alloc_type(int migratetype, int order);
-bool check_alloc_flag(int alloc_flag, int order);
-int request_reserved_block(void);
+#include "opchain_struct_offset_helper.h"
+#include "../kernel/sched/sched.h"
 
-#endif /* _LINUX_MODULE_DEFRAG_H */
+/* struct task_struct */
+unsigned int opchain_task_struct_offset[__TASK_OFFSET_MAX] = {
+	[TASK_OFFSET_WAKEE_FLIPS] = offsetof(struct task_struct, wakee_flips),
+	[TASK_OFFSET_CPUS_ALLOWED] = offsetof(struct task_struct, cpus_allowed),
+	[TASK_OFFSET_PID] = offsetof(struct task_struct, pid),
+	[TASK_OFFSET_TGID] = offsetof(struct task_struct, tgid),
+	[TASK_OFFSET_GROUP_LEADER] = offsetof(struct task_struct, group_leader),
+	[TASK_OFFSET_COMM] = offsetof(struct task_struct, comm),
+	[TASK_OFFSET_UTASK_TAG] = offsetof(struct task_struct, utask_tag),
+	[TASK_OFFSET_UTASK_TAG_BASE] = offsetof(struct task_struct, utask_tag_base),
+	[TASK_OFFSET_ETASK_CLAIM] = offsetof(struct task_struct, etask_claim),
+	[TASK_OFFSET_CLAIM_CPU] = offsetof(struct task_struct, claim_cpu),
+	[TASK_OFFSET_UTASK_SLAVE] = offsetof(struct task_struct, utask_slave)
+};
+gen_type_offset_impl(task_struct);
+
+/* struct rq */
+unsigned int opchain_rq_offset[__RQ_OFFSET_MAX] = {
+#ifdef CONFIG_SMP
+	[RQ_OFFSET_CPU] = offsetof(struct rq, cpu),
+#endif
+#ifdef CONFIG_SCHED_HMP
+	[RQ_OFFSET_WINDOW_START] = offsetof(struct rq, window_start),
+#endif
+	[RQ_OFFSET_CLOCK] = offsetof(struct rq, clock)
+};
+gen_type_offset_impl(rq);
