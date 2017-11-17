@@ -1785,6 +1785,11 @@ struct task_struct {
 	unsigned int	sequential_io;
 	unsigned int	sequential_io_avg;
 #endif
+	u64 utask_tag;
+	u64 utask_tag_base;
+	int etask_claim;
+	int claim_cpu;
+	bool utask_slave;
 };
 
 /* Future-safe accessor for struct task_struct's cpus_allowed. */

@@ -90,6 +90,9 @@
 #include <asm/app_api.h>
 #endif
 
+#include <../drivers/oneplus/coretech/opchain/opchain_helper.h>
+
+
 #include "sched.h"
 #include "../workqueue_internal.h"
 #include "../smpboot.h"
@@ -1193,13 +1196,18 @@ unsigned long __weak arch_get_cpu_efficiency(int cpu)
 /* Keep track of max/min capacity possible across CPUs "currently" */
 static void __update_min_max_capacity(void)
 {
-	int i;
 	int max_cap = 0, min_cap = INT_MAX;
 
-	for_each_online_cpu(i) {
-		max_cap = max(max_cap, cpu_capacity(i));
-		min_cap = min(min_cap, cpu_capacity(i));
-	}
+    struct sched_cluster *cluster;
+
+    for_each_sched_cluster(cluster) {
+        if (cluster->capacity > max_cap)
+            max_cap = cluster->capacity;
+        if (cluster->capacity < min_cap)
+            min_cap = cluster->capacity;
+    }
+    op_min_cap_load = div64_u64((u64)min_cap * (u64)sched_ravg_window, max_possible_capacity);
+    opc_update_cpu_cravg_demand(op_min_cap_load);
 
 	max_capacity = max_cap;
 	min_capacity = min_cap;
@@ -1317,6 +1325,7 @@ int num_clusters;
 unsigned int max_power_cost = 1;
 
 static struct sched_cluster init_cluster = {
+	.governor_policy      =   UX_GOVERNOR,
 	.list			=	LIST_HEAD_INIT(init_cluster.list),
 	.id			=	0,
 	.max_power_cost		=	1,
@@ -1335,6 +1344,44 @@ static struct sched_cluster init_cluster = {
 	.dstate_wakeup_latency	=	0,
 	.exec_scale_factor	=	1024,
 };
+
+extern unsigned int ux_notify;
+extern bool oneplus_is_uxtask(struct task_struct *t);
+extern bool oneplus_is_server_or_uxgroup(struct task_struct *t);
+extern bool oneplus_is_background(struct task_struct *t);
+void update_cluster_governor_policy(int cpu)
+{
+    int ux_num = 0;
+    int negative_num = 0;
+    int i = 0;
+    int policy_update;
+    struct sched_cluster *cluster = cpu_rq(cpu)->cluster;
+    struct cpumask *cpus = &(cluster->cpus);
+    raw_spin_lock(&cluster->governor_lock);
+    for_each_cpu(i, cpus) {
+            struct task_struct *curr_task = cpu_rq(i)->curr;
+            if (cpu_is_offline(i))
+                continue;
+            if (!oneplus_is_background(curr_task->group_leader))
+                    ux_num++;
+            else
+                negative_num++;
+    }
+
+    if (ux_num > 0)
+        policy_update = UX_GOVERNOR;
+    else
+        policy_update = NEGATIVE_GOVERNOR;
+      
+    if (policy_update != cluster->governor_policy ){
+        cluster->governor_policy = policy_update;
+        atomic_notifier_call_chain(
+            &load_alert_notifier_head, 0,
+            (void *)(long)cpu);
+    }
+    raw_spin_unlock(&cluster->governor_lock);
+}
+
 
 void update_all_clusters_stats(void)
 {
@@ -1502,6 +1549,8 @@ static struct sched_cluster *alloc_new_cluster(const struct cpumask *cpus)
 	if (cluster->efficiency < min_possible_efficiency)
 		min_possible_efficiency = cluster->efficiency;
 
+	raw_spin_lock_init(&cluster->governor_lock);
+	cluster->governor_policy = UX_GOVERNOR;
 	return cluster;
 }
 
@@ -1550,6 +1599,7 @@ static void init_clusters(void)
 {
 	bitmap_clear(all_cluster_ids, 0, NR_CPUS);
 	init_cluster.cpus = *cpu_possible_mask;
+	raw_spin_lock_init(&init_cluster.governor_lock);
 	INIT_LIST_HEAD(&cluster_head);
 }
 
@@ -6272,6 +6322,9 @@ again:
  *          - return from syscall or exception to user-space
  *          - return from interrupt-handler to user-space
  */
+extern void update_cluster_governor_policy(int cpu);
+extern unsigned int ux_notify;
+ 
 static void __sched __schedule(void)
 {
 	struct task_struct *prev, *next;
@@ -6381,6 +6434,8 @@ asmlinkage __visible void __sched schedule(void)
 
 	sched_submit_work(tsk);
 	__schedule();
+	if (ux_notify)
+        update_cluster_governor_policy(smp_processor_id());
 }
 EXPORT_SYMBOL(schedule);
 
