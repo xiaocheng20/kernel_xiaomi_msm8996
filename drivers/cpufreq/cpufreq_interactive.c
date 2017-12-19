@@ -346,8 +346,7 @@ static unsigned int choose_freq(struct cpufreq_interactive_policyinfo *pcpu,
 		if (op_ut_fore_cluster)
 			tl = 70;
 		else
-
-		tl = freq_to_targetload(pcpu->policy->governor_data, freq);
+			tl = freq_to_targetload(pcpu->policy->governor_data, freq);
 
 		/*
 		 * Find the lowest frequency where the computed load is less
