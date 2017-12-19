@@ -833,11 +833,11 @@ static void cpufreq_interactive_boost(struct cpufreq_interactive_tunables *tunab
 }
 
 extern unsigned int ux_notify;
-#define DEFAULT_MAX_FREQ_BIG 2342400
+#define DEFAULT_MAX_FREQ_BIG 2150400
 #define DEFAULT_MAX_FREQ_SMALL 1593600
 
-#define LIMIT_FREQ_BIG 1209600
-#define LIMIT_FREQ_SMALL 1056000
+#define LIMIT_FREQ_BIG 1996800
+#define LIMIT_FREQ_SMALL 1324800
 
 
 void reset_cpu_max_freq(void)
