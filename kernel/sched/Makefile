@@ -28,3 +28,4 @@ obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
 
 # Dynamic Energy Model
 obj-$(CONFIG_DYN_ENERGY_MODEL) += dyn_energy_model.o
+obj-y += boost.o
