@@ -1076,6 +1076,14 @@ static void f2fs_put_super(struct super_block *sb)
 
 	iput(sbi->node_inode);
 	iput(sbi->meta_inode);
+	sbi->meta_inode = NULL;
+
+	/*
+	 * iput() can update stat information, if f2fs_write_checkpoint()
+	 * above failed with error.
+	 */
+	f2fs_destroy_stats(sbi);
+	f2fs_sbi_list_del(sbi);
 
 	/* destroy f2fs internal modules */
 	f2fs_destroy_node_manager(sbi);
@@ -1408,7 +1416,6 @@ static void default_options(struct f2fs_sb_info *sbi)
 	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
 	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
 
-	set_opt(sbi, BG_GC);
 	set_opt(sbi, INLINE_XATTR);
 	set_opt(sbi, INLINE_DATA);
 	set_opt(sbi, INLINE_DENTRY);
@@ -3034,9 +3041,7 @@ try_onemore:
 		goto free_nm;
 	}
 
-	err = f2fs_build_stats(sbi);
-	if (err)
-		goto free_node_inode;
+	f2fs_sbi_list_add(sbi);
 
 	/* read root inode and dentry */
 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
