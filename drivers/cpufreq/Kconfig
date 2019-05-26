@@ -152,6 +152,33 @@ config CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
 	  Use the 'schedutil' CPUFreq governor by default. If unsure,
 	  have a look at the help section of that governor. The fallback
 	  governor will be 'performance'.
+
+config CPU_FREQ_DEFAULT_GOV_BLU_SCHEDUTIL
+	bool "blu_schedutil"
+	select CPU_FREQ_GOV_BLU_SCHEDUTIL
+	help
+	  Use the 'blu_schedutil' CPUFreq governor by default. If unsure,
+	  have a look at the help section of that governor. The fallback
+	  governor will be 'performance'.
+	 
+config CPU_FREQ_DEFAULT_GOV_PWRUTILX
+	bool "pwrutilx"
+	depends on SMP
+	select CPU_FREQ_GOV_PWRUTILX
+	select CPU_FREQ_GOV_PERFORMANCE
+	help
+	  Use the 'pwrutilx' CPUFreq governor by default. If unsure,
+	  have a look at the help section of that governor. The fallback
+	  governor will be 'performance'.
+
+config CPU_FREQ_DEFAULT_GOV_DARKUTIL
+	bool "darkutil"
+	select CPU_FREQ_GOV_DARKUTIL
+	help
+	  Use the 'DARKUTIL' CPUFreq governor by default. If unsure,
+	  have a look at the help section of that governor. The fallback
+	  governor will be 'performance'.	  
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -346,6 +373,26 @@ config INPUT_BOOST_FREQ_PERF
 config REMOVE_INPUT_BOOST_FREQ_LP
 	int "Low-power cluster return frequency"
 	default "0"
+config CPU_FREQ_GOV_HELIX
+ 	bool "'helix_schedutil' cpufreq policy governor"
+ 	depends on CPU_FREQ && SMP
+ 	select CPU_FREQ_GOV_ATTR_SET
+ 	select IRQ_WORK
+ 	help
+ 	  This governor makes decisions based on the utilization data provided
+ 	  by the scheduler.  It sets the CPU frequency to be proportional to
+ 	  the utilization/capacity ratio coming from the scheduler.  If the
+ 	  utilization is frequency-invariant, the new frequency is also
+ 	  proportional to the maximum available frequency.  If that is not the
+ 	  case, it is proportional to the current frequency of the CPU.  The
+ 	  frequency tipping point is at utilization/capacity equal to 80% in
+ 	  both cases. This governor also allows changing of the frequency tipping point by changing the bit shift value of the schedutil get_next_freq equation.
+
+  	  If in doubt, say N.
+
+config CPU_WAKE_BOOST
+	bool "CPU wake boost"
+	depends on FB
 	help
 	  This is the frequency the low-power cluster will fallback to
 	  once the boost is over. The default 0 will make the policy
@@ -363,6 +410,24 @@ config REMOVE_INPUT_BOOST_FREQ_PERF
 	  of using a higher than cpuinfo.min_freq (e.g. OnePlus 5/5T/6)
 	  this frequency will be used.
 endif
+
+config CPU_FREQ_GOV_DARKUTIL
+        tristate "'darkutil' cpufreq policy governor"
+        depends on CPU_FREQ
+        select CPU_FREQ_GOV_ATTR_SET
+        select IRQ_WORK
+        help
+          This governor makes decisions based on the utilization data provided
+          by the scheduler.  It sets the CPU frequency to be proportional to
+          the utilization/capacity ratio coming from the scheduler.  If the
+          utilization is frequency-invariant, the new frequency is also
+          proportional to the maximum available frequency.  If that is not the
+          case, it is proportional to the current frequency of the CPU.  The
+          frequency tipping point is at utilization/capacity equal to 80% in
+          both cases.
+          To compile this driver as a module, choose M here: the module will
+          be called cpufreq_darkutil.
+          If in doubt, say N.
 
 comment "CPU frequency scaling drivers"
 

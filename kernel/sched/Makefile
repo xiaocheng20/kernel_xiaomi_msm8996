@@ -28,4 +28,9 @@ obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
 
 # Dynamic Energy Model
 obj-$(CONFIG_DYN_ENERGY_MODEL) += dyn_energy_model.o
+obj-$(CONFIG_CPU_FREQ_GOV_BLU_SCHEDUTIL) += cpufreq_blu_schedutil.o
+obj-$(CONFIG_CPU_FREQ_GOV_HELIX) += cpufreq_helix_schedutil.o
+obj-$(CONFIG_CPU_FREQ_GOV_SCHED) += cpufreq_sched.o
+obj-$(CONFIG_CPU_FREQ_GOV_PWRUTILX) += cpufreq_pwrutilx.o
+obj-$(CONFIG_CPU_FREQ_GOV_DARKUTIL) += cpufreq_darkutil.o
 obj-y += boost.o
