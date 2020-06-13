@@ -25,3 +25,6 @@ obj-$(CONFIG_SCHED_TUNE) += tune.o
 obj-$(CONFIG_CGROUP_CPUACCT) += cpuacct.o
 obj-$(CONFIG_CPU_FREQ) += cpufreq.o
 obj-$(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) += cpufreq_schedutil.o
+
+# Dynamic Energy Model
+obj-$(CONFIG_DYN_ENERGY_MODEL) += dyn_energy_model.o
