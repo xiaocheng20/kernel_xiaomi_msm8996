@@ -1484,11 +1484,13 @@ static ssize_t fts_production_test_show(struct device *dev, struct device_attrib
 					rx = configData[i++];
 					cx2_h_thres_size = tx * rx;
 					cx2_h_thres = (unsigned char *)kmalloc(cx2_h_thres_size, GFP_KERNEL);
+
 					while (cx2_h_thres_index < cx2_h_thres_size)
 						cx2_h_thres[cx2_h_thres_index++] = configData[i];
-						i++;
+
+					i++;
 					if (debug_mode)
-					tp_log("%s,0xaa0x55 01 configData[i] = %d\n", __func__, configData[i]);
+						tp_log("%s,0xaa0x55 01 configData[i] = %d\n", __func__, configData[i]);
 
 					break;
 				}
@@ -2644,7 +2646,7 @@ static ssize_t fts_i2c_wr_show(struct device *dev, struct device_attribute *attr
 	snprintf(buff, sizeof(buff), "{");
 	strncat(Out_buff, buff, 512);
 	for (i = 0; i < (byte_count_read + 2); i++) {
-		if ((i == 0)) {
+		if (i == 0) {
 			char temp_byte_count_read = (byte_count_read >> 8) & 0xFF;
 			snprintf(buff, sizeof(buff), "%02X", temp_byte_count_read);
 		} else if (i == 1) {
@@ -2714,7 +2716,7 @@ static ssize_t fts_i2c_read_show(struct device *dev, struct device_attribute *at
 	snprintf(buff, sizeof(buff), "{");
 	strncat(Out_buff, buff, 512);
 	for (i = 0; i < (byte_count_read + 2); i++) {
-		if ((i == 0)) {
+		if (i == 0) {
 			char temp_byte_count_read = (byte_count_read >> 8) & 0xFF;
 			snprintf(buff, sizeof(buff), "%02X", temp_byte_count_read);
 		} else if (i == 1) {
