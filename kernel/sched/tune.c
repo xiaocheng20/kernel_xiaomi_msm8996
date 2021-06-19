@@ -950,7 +950,9 @@ static void write_default_values(struct cgroup_subsys_state *css)
 	struct groups_data groups[3] = {
 		{ "top-app",    0, 1 },
 		{ "foreground", 0, 1 },
-		{ "background", 0, 0 }};
+		{ "background", 0, 0 }
+		{ "rt",         0, 0, 0, 0 },
+		};
 
 	for (i = 0; i < ARRAY_SIZE(groups); i++) {
 		if (!strcmp(css->cgroup->kn->name, groups[i].name)) {
