@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010 Samsung Electronics Co.Ltd
  * Author: Joonyoung Shim <jy0922.shim@samsung.com>
- * Copyright (C) 2016 XiaoMi, Inc.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute  it and/or modify it
  * under  the terms of  the GNU General  Public License as published by the
@@ -61,7 +61,7 @@ struct mxt_config_info {
 	u8 mult_tchthr_sensitive;
 	u8 mult_tchthr_not_sensitive;
 	u8 wake_up_self_adcx;
-	/*glove mode reg value*/
+	/* glove mode reg value */
 	u8 atchratio;
 	u8 xycfg;
 	u8 xsize;
