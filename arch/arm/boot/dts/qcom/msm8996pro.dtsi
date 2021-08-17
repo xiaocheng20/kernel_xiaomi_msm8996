@@ -21,6 +21,10 @@
 	model = "Qualcomm Technologies, Inc. MSM 8996pro";
 	qcom,msm-id = <305 0x10000>;
 
+	chosen {
+		bootargs = "app_setting.use_32bit_app_setting_pro=1 kpti=1";
+	};
+
     cpus {
         energy-costs {
 			compatible = "sched-energy";
