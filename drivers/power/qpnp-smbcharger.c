@@ -266,7 +266,7 @@ struct smbchg_chip {
 	int				src_detect_irq;
 	int				otg_fail_irq;
 	int				otg_oc_irq;
-	int				aicl_done_irq;
+	int                            aicl_done_irq;
 	int				usbid_change_irq;
 	int				chg_error_irq;
 	bool				enable_aicl_wake;
@@ -7242,7 +7242,6 @@ static irqreturn_t aicl_done_handler(int irq, void *_chip)
 {
 	struct smbchg_chip *chip = _chip;
 	bool usb_present = is_usb_present(chip);
-	int aicl_level = smbchg_get_aicl_level_ma(chip);
 
 	pr_smb(PR_INTERRUPT, "triggered, aicl: %d\n", aicl_level);
 
