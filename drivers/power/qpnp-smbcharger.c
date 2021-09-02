@@ -6998,7 +6998,6 @@ static irqreturn_t aicl_done_handler(int irq, void *_chip)
 {
 	struct smbchg_chip *chip = _chip;
 	bool usb_present = is_usb_present(chip);
-	int aicl_level = smbchg_get_aicl_level_ma(chip);
 
 	pr_smb(PR_INTERRUPT, "triggered, aicl: %d\n", aicl_level);
 
