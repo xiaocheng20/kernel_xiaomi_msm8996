@@ -703,7 +703,7 @@ static void cpufreq_interactive_timer(unsigned long data)
     trace_printk("new_freq  %d   oneplus_max  %d\n", new_freq, ppol->policy->oneplus_max);
     if (new_freq > ppol->policy->oneplus_max)
         new_freq = ppol->policy->oneplus_max;
-
+{
 	trace_cpufreq_interactive_target(max_cpu, pol_load, ppol->target_freq,
 					 ppol->policy->cur, new_freq);
 
@@ -713,6 +713,7 @@ static void cpufreq_interactive_timer(unsigned long data)
 	cpumask_set_cpu(max_cpu, &speedchange_cpumask);
 	spin_unlock_irqrestore(&speedchange_cpumask_lock, flags);
 	wake_up_process_no_notif(speedchange_task);
+}
 
 rearm:
 	if (!timer_pending(&ppol->policy_timer))
