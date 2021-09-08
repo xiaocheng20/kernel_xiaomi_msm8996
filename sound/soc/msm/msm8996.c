@@ -5992,11 +5992,7 @@ static void *def_tasha_mbhc_cal(void)
 	   for fixing the noise issue introduced by NFC P2P. So need
 	   re-calculate the button threshold
 	*/
-	if ((get_hw_version_devid() == 7) &&
-			(get_hw_version() & (HW_MAJOR_VERSION_MASK | HW_MINOR_VERSION_MASK)) > 0x43) {
-		btn_high[0] = 360;
-		btn_high[1] = 500;
-	}
+
 	return tasha_wcd_cal;
 }
 
